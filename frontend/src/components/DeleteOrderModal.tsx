@@ -1,0 +1,74 @@
+import { useState } from "react";
+import { api, ApiError } from "../api/client";
+import type { Order } from "../api/types";
+
+interface Props {
+    order: Order;
+    onClose: () => void;
+    onDeleted: () => void;
+}
+
+export default function DeleteOrderModal({ order, onClose, onDeleted }: Props) {
+    const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    async function handleDelete() {
+        setError("");
+        setLoading(true);
+        try {
+            await api.deleteOrder(order.id);
+            onDeleted();
+        } catch (err) {
+            setError(err instanceof ApiError ? err.message : "Failed to delete order");
+            setLoading(false);
+        }
+    }
+
+    return (
+        <div className="modal-backdrop" onClick={onClose}>
+            <div className="modal modal-delete" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-labelledby="delete-order-title">
+                <div className="modal-head">
+                    <div className="modal-icon modal-icon-delete" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+                            <path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                        </svg>
+                    </div>
+                    <h2 id="delete-order-title">Delete Order</h2>
+                    <button className="modal-close" onClick={onClose} aria-label="Close">×</button>
+                </div>
+
+                <div className="delete-body">
+                    <p className="delete-warning">
+                        Are you sure you want to delete this order? This action <strong>cannot be undone</strong>.
+                    </p>
+                    <div className="delete-order-card">
+                        <div className="customer-cell">
+                            <span className="customer-avatar">{order.customerName.charAt(0).toUpperCase()}</span>
+                            <div className="details-customer">
+                                <strong>{order.customerName}</strong>
+                                <span>Order #{order.id}</span>
+                            </div>
+                        </div>
+                        <div className="status-route">
+                            <span className="route-point">{order.pickupAddress}</span>
+                            <span className="route-arrow" aria-hidden="true">→</span>
+                            <span className="route-point">{order.dropoffAddress}</span>
+                        </div>
+                    </div>
+                    {error && <div className="error-banner">{error}</div>}
+                </div>
+
+                <div className="modal-actions">
+                    <button type="button" className="btn-secondary" onClick={onClose} disabled={loading}>Cancel</button>
+                    <button type="button" className="btn-danger" onClick={handleDelete} disabled={loading}>
+                        {loading ? <span className="btn-spinner" aria-hidden="true" /> : "Delete order"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
