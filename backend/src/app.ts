@@ -210,19 +210,24 @@ export function createApp(): Hono {
     );
 
     app.get("/", (c) => c.html(statusPageHtml()));
+    app.get("/api", (c) => c.html(statusPageHtml()));
 
-    app.get("/health", (c) =>
+    const healthHandler = (c: any) =>
         c.json({
             status: "ok",
             service: "onway-delivery-tracker-api",
             db: dbStatus(),
             uptime: process.uptime(),
             timestamp: new Date().toISOString(),
-        })
-    );
+        });
+
+    app.get("/health", healthHandler);
+    app.get("/api/health", healthHandler);
 
     app.route("/auth", authRoutes);
+    app.route("/api/auth", authRoutes);
     app.route("/orders", orderRoutes);
+    app.route("/api/orders", orderRoutes);
 
     app.onError((err, c) => {
         console.error("[error]", err);
