@@ -1,15 +1,21 @@
 # Dependencies
 node_modules/
+**/node_modules/
 .pnp/
 .pnp.js
 
 # Builds
 dist/
+**/dist/
 build/
+**/build/
 *.tsbuildinfo
+**/*.tsbuildinfo
+.vercel/
 
 # Env files
 .env
+**/.env
 .env.local
 .env.*.local
 
@@ -27,4 +33,4 @@ yarn-error.log*
 Thumbs.db
 
 # Testing
-coverage/
+coverage/
