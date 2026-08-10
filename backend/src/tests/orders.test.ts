@@ -37,11 +37,13 @@ beforeAll(async () => {
     process.env.MONGODB_URI = mongoServer.getUri();
     process.env.JWT_SECRET = JWT_SECRET;
     await mongoose.connect(mongoServer.getUri());
-});
+}, 120000);
 
 afterAll(async () => {
     await mongoose.disconnect();
-    await mongoServer.stop();
+    if (mongoServer) {
+        await mongoServer.stop();
+    }
 });
 
 beforeEach(async () => {
