@@ -268,7 +268,7 @@ export function createApp(): Hono {
             return c.json(
                 {
                     error: {
-                        message: "Database error",
+                        message: `Database error: ${err.message}`,
                     },
                 },
                 500
@@ -278,7 +278,7 @@ export function createApp(): Hono {
         return c.json(
             {
                 error: {
-                    message: "Internal server error",
+                    message: err?.message || "Internal server error",
                 },
             },
             500

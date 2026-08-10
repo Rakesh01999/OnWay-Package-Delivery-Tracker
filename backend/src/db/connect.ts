@@ -1,17 +1,19 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 import { env } from "../config/env";
+import { User } from "./models/User";
 
 export async function connectDB(uri?: string): Promise<void> {
     if (mongoose.connection.readyState >= 1) {
         return;
     }
-    mongoose.set("strictQuery", true);
-    await mongoose.connect(uri ?? env.MONGODB_URI);
-    console.log("[db] MongoDB connected");
-
     try {
-        const { User } = await import("./models/User");
-        const bcrypt = (await import("bcryptjs")).default;
+        mongoose.set("strictQuery", true);
+        await mongoose.connect(uri ?? env.MONGODB_URI, {
+            serverSelectionTimeoutMS: 5000,
+        });
+        console.log("[db] MongoDB connected");
+
         const count = await User.countDocuments();
         if (count === 0) {
             const email = process.env.SEED_EMAIL ?? "staff@onway.com";
@@ -20,8 +22,8 @@ export async function connectDB(uri?: string): Promise<void> {
             await User.create({ email, passwordHash });
             console.log(`[db] Auto-seeded staff user: ${email}`);
         }
-    } catch (err) {
-        console.error("[db] Seed check failed:", err);
+    } catch (err: any) {
+        console.error("[db] Connection failed:", err?.message || err);
     }
 }
 
