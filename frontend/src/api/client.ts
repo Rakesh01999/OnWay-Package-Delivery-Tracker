@@ -1,6 +1,8 @@
+/// <reference types="vite/client" />
+
 import type { AuthResponse, CreateOrderInput, Order, OrderListResponse } from "./types";
 
-const API_BASE = "/api";
+const API_BASE = (import.meta.env.VITE_API_URL || "/api").replace(/\/$/, "");
 
 export class ApiError extends Error {
     status: number;
@@ -18,7 +20,18 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
         ...(options.headers as Record<string, string>),
     };
     const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
-    if (!res.ok) throw new ApiError(res.status, "Request failed");
+    if (!res.ok) {
+        let errorMsg = "Request failed";
+        try {
+            const body = await res.json();
+            if (body?.error?.message) {
+                errorMsg = body.error.message;
+            } else if (body?.message) {
+                errorMsg = body.message;
+            }
+        } catch {}
+        throw new ApiError(res.status, errorMsg);
+    }
     if (res.status === 204) return undefined as T;
     return (await res.json()) as T;
 }

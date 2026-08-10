@@ -24,6 +24,10 @@ export async function connectDB(uri?: string): Promise<void> {
         }
     } catch (err: any) {
         console.error("[db] Connection failed:", err?.message || err);
+        throw new Error(`Database connection failed: ${err?.message || "Failed to connect to MongoDB"}`);
+    }
+    if (mongoose.connection.readyState < 1) {
+        throw new Error("Database connection unavailable");
     }
 }
 
