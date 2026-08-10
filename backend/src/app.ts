@@ -7,6 +7,7 @@ import { authRoutes } from "./routes/auth";
 import { orderRoutes } from "./routes/orders";
 import { env } from "./config/env";
 import { HttpError } from "./utils/errors";
+import { connectDB } from "./db/connect";
 
 function dbStatus(): "connected" | "connecting" | "disconnected" {
     switch (mongoose.connection.readyState) {
@@ -208,6 +209,10 @@ export function createApp(): Hono {
             allowHeaders: ["Content-Type", "Authorization"],
         })
     );
+    app.use("*", async (_c, next) => {
+        await connectDB();
+        await next();
+    });
 
     app.get("/", (c) => c.html(statusPageHtml()));
     app.get("/api", (c) => c.html(statusPageHtml()));
