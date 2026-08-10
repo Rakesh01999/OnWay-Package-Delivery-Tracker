@@ -566,4 +566,4 @@ npm run typecheck
 
 This project was created as a technical assessment submission for the **Onway Full-Stack Software Engineer** role.
 
-**Author:** Balen Ibrahim — Full-Stack Software Engineer candidate
+**Author:** Rakesh Biswas — Full-Stack Software Engineer candidate
