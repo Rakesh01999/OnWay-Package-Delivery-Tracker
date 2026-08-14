@@ -45,7 +45,7 @@ This project delivers that slice end-to-end:
 - A **Hono.js REST API** with Zod validation, a fixed status state machine, and timestamped status history
 - A **React + Vite dashboard** with a responsive table, status badges, filters, search, create/detail/delete modals, and JWT staff authentication
 - A **MongoDB** data layer (Mongoose) with soft-delete support and indexed queries
-- A production deployment on **Vercel** (single project — serverless backend + static frontend, auto-HTTPS)
+- A production deployment on **Vercel** (single project — serverless backend + static frontend, HTTPS)
 
 ---
 
